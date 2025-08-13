@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<article class="mt-4">
+    <h2>{{ article.title }}</h2>
+    <p class="text-muted">
+        By {{ article.journalist.username }} | Published on {{ article.created_at|date:"M d, Y" }}
+    </p>
+    <hr>
+    <div>
+        {{ article.content|linebreaks }}
+    </div>
+</article>
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary mt-4">Back to Dashboard</a>
+{% endblock %}

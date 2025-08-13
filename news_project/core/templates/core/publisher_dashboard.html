@@ -1,0 +1,47 @@
+{% extends 'core/base.html' %}
+{% block title %}Publisher Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Welcome, {{ user.username }}!</h2>
+
+<h4 class="mb-3">✅ Approved Articles</h4>
+{% if approved_articles %}
+  <ul class="list-group mb-4">
+    {% for article in approved_articles %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ article.title }}</strong><br>
+          <small class="text-muted">
+            Created on {{ article.created_at|date:"M d, Y" }}
+          </small>
+        </div>
+        <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-secondary">View</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No approved articles yet.</p>
+{% endif %}
+
+<hr>
+
+<h4 class="mb-3">🕓 Pending Articles</h4>
+{% if pending_articles %}
+  <ul class="list-group mb-4">
+    {% for article in pending_articles %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ article.title }}</strong><br>
+          <small class="text-muted">
+            Created on {{ article.created_at|date:"M d, Y" }}
+          </small>
+        </div>
+        <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-warning">Review</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No pending articles awaiting approval.</p>
+{% endif %}
+
+{% endblock %}

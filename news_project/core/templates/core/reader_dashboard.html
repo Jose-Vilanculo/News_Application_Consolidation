@@ -1,0 +1,60 @@
+{% extends 'core/base.html' %}
+{% block title %}Reader Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Welcome, {{ user.username }}!</h2>
+
+<h4>📰 Subscriptions:</h4>
+<ul>
+  {% for pub in user.subscribed_publishers.all %}
+    <li>{{ pub.name }}</li>
+  {% endfor %}
+  {% for journo in user.subscribed_journalists.all %}
+    <li>{{ journo.username }}</li>
+  {% endfor %}
+</ul>
+
+<a href="{% url 'manage_subscriptions' %}" class="btn btn-primary mt-3 mb-5">Manage Subscriptions</a>
+
+<hr>
+
+<h4 class="mb-3">📚 Articles for You</h4>
+{% if articles %}
+  <ul class="list-group">
+    {% for article in articles %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ article.title }}</strong><br>
+          <small class="text-muted">
+            By: {{ article.journalist.username }}{% if article.publisher %} | Publisher: {{ article.publisher.name }}{% endif %} | {{ article.created_at|date:"M d, Y" }}
+          </small>
+        </div>
+        <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-primary">Read</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No articles available yet.</p>
+{% endif %}
+
+<hr>
+
+<h4 class="mb-3">📬 Newsletters</h4>
+{% if newsletters %}
+  <ul class="list-group">
+    {% for newsletter in newsletters %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <div>
+          <strong>{{ newsletter.title }}</strong><br>
+          <small class="text-muted">
+            By: {{ newsletter.journalist.username }}{% if newsletter.publisher %} | Publisher: {{ newsletter.publisher.name }}{% endif %}
+          </small>
+        </div>
+        <a href="{% url 'newsletter_detail' newsletter.pk %}" class="btn btn-sm btn-outline-success">Read</a>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No newsletters available.</p>
+{% endif %}
+{% endblock %}

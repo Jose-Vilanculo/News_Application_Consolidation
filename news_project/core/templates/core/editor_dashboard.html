@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+{% block title %}Editor Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Editor Dashboard</h2>
+
+<!-- Pending Articles -->
+<h4>🕓 Pending Articles:</h4>
+{% for article in pending_articles %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ article.title }}</h5>
+      <p class="card-text">{{ article.content|truncatechars:150 }}</p>
+      <p class="card-text"><small>By: {{ article.journalist.username }}{% if article.publisher %} | Publisher: {{ article.publisher.name }}{% endif %}</small></p>
+
+      <form method="post" action="{% url 'approve_article' article.pk %}" class="mb-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Approve</button>
+      </form>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'edit_article' article.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+        <a href="{% url 'delete_article' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No articles pending approval.</p>
+{% endfor %}
+
+<hr>
+
+<!-- Pending Newsletters -->
+<h4>🕓 Pending Newsletters:</h4>
+{% for newsletter in pending_newsletters %}
+  <div class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ newsletter.title }}</h5>
+      <p class="card-text">{{ newsletter.body|truncatechars:150 }}</p>
+      <p class="card-text">
+        <small>By: {{ newsletter.journalist.username }}{% if newsletter.publisher %} | Publisher: {{ newsletter.publisher.name }}{% endif %}</small>
+      </p>
+
+      <form method="post" action="{% url 'approve_newsletter' newsletter.pk %}" class="mb-2">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Approve</button>
+      </form>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'edit_newsletter' newsletter.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+        <a href="{% url 'delete_newsletter' newsletter.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No newsletters pending approval.</p>
+{% endfor %}
+
+<hr>
+
+<!-- Approved Articles -->
+<h4>✅ Approved Articles:</h4>
+{% for article in approved_articles %}
+  <div class="card mb-3 border-success">
+    <div class="card-body">
+      <h5 class="card-title">{{ article.title }}</h5>
+      <p class="card-text">{{ article.content|truncatechars:150 }}</p>
+      <p class="card-text"><small>By: {{ article.journalist.username }}{% if article.publisher %} | Publisher: {{ article.publisher.name }}{% endif %}</small></p>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'edit_article' article.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+        <a href="{% url 'delete_article' article.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No approved articles.</p>
+{% endfor %}
+
+<hr>
+
+<!-- Approved Newsletters -->
+<h4>✅ Approved Newsletters:</h4>
+{% for newsletter in approved_newsletters %}
+  <div class="card mb-3 border-success">
+    <div class="card-body">
+      <h5 class="card-title">{{ newsletter.title }}</h5>
+      <p class="card-text">{{ newsletter.body|truncatechars:150 }}</p>
+      <p class="card-text">
+        <small>By: {{ newsletter.journalist.username }}{% if newsletter.publisher %} | Publisher: {{ newsletter.publisher.name }}{% endif %}</small>
+      </p>
+
+      <div class="d-flex gap-2">
+        <a href="{% url 'edit_newsletter' newsletter.pk %}" class="btn btn-outline-secondary btn-sm">Edit</a>
+        <a href="{% url 'delete_newsletter' newsletter.pk %}" class="btn btn-outline-danger btn-sm">Delete</a>
+      </div>
+    </div>
+  </div>
+{% empty %}
+  <p>No approved newsletters.</p>
+{% endfor %}
+
+{% endblock %}

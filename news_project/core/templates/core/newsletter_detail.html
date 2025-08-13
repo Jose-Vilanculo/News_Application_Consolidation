@@ -1,0 +1,17 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ newsletter.title }}{% endblock %}
+
+{% block content %}
+<article class="mt-4">
+    <h2>{{ newsletter.title }}</h2>
+    <p class="text-muted">
+        By {{ newsletter.author.username }}{% if newsletter.publisher %} | From {{ newsletter.publisher.name }}{% endif %} | Sent on {{ newsletter.created_at|date:"M d, Y" }}
+    </p>
+    <hr>
+    <div>
+        {{ newsletter.body|linebreaks }}
+    </div>
+</article>
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary mt-4">Back to Dashboard</a>
+{% endblock %}

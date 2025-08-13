@@ -1,0 +1,14 @@
+{% extends 'core/base.html' %}
+{% block title %}New Newsletter{% endblock %}
+
+{% block content %}
+<h2>Create Newsletter</h2>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Submit for Approval</button>
+</form>
+
+<a href="{% url 'dashboard' %}" class="btn btn-secondary mt-3">Back to Dashboard</a>
+{% endblock %}

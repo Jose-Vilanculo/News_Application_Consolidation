@@ -1,0 +1,88 @@
+{% extends 'core/base.html' %}
+{% block title %}Journalist Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="mb-3">Welcome, {{ user.username }} (Journalist)</h2>
+
+<div class="d-flex gap-3 mb-4">
+  <a href="{% url 'create_article' %}" class="btn btn-success">➕ New Article</a>
+  <a href="{% url 'create_newsletter' %}" class="btn btn-info text-white">📧 New Newsletter</a>
+</div>
+
+<!-- Pending Articles Section -->
+<h4 class="mb-2">🕓 Pending Articles</h4>
+{% if pending_articles %}
+  <ul class="list-group mb-4">
+    {% for article in pending_articles %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ article.title }}</span>
+        <div class="d-flex align-items-center">
+          <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-primary me-2">Read</a>
+          <a href="{% url 'edit_article' article.pk %}" class="btn btn-sm btn-outline-secondary me-2">Edit</a>
+          <a href="{% url 'delete_article' article.pk %}" class="btn btn-sm btn-outline-danger me-3">Delete</a>
+          <span class="badge bg-warning text-dark">Pending</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No pending articles.</p>
+{% endif %}
+
+<!-- Pending Newsletters Section -->
+<h4 class="mb-2">🕓 Pending Newsletters</h4>
+{% if pending_newsletters %}
+  <ul class="list-group mb-4">
+    {% for newsletter in pending_newsletters %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ newsletter.title }}</span>
+        <div class="d-flex align-items-center">
+          <a href="{% url 'newsletter_detail' newsletter.pk %}" class="btn btn-sm btn-outline-primary me-2">Read</a>
+          <a href="{% url 'edit_newsletter' newsletter.pk %}" class="btn btn-sm btn-outline-secondary me-2">Edit</a>
+          <a href="{% url 'delete_newsletter' newsletter.pk %}" class="btn btn-sm btn-outline-danger me-3">Delete</a>
+          <span class="badge bg-warning text-dark">Pending</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No pending newsletters.</p>
+{% endif %}
+
+<!-- Approved Articles Section -->
+<h4 class="mb-2">✅ Approved Articles</h4>
+{% if approved_articles %}
+  <ul class="list-group mb-4">
+    {% for article in approved_articles %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ article.title }}</span>
+        <div class="d-flex align-items-center">
+          <a href="{% url 'article_detail' article.pk %}" class="btn btn-sm btn-outline-primary me-3">Read</a>
+          <span class="badge bg-success">Approved</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No approved articles yet.</p>
+{% endif %}
+
+<!-- Approved Newsletters Section -->
+<h4 class="mb-2">✅ Approved Newsletters</h4>
+{% if approved_newsletters %}
+  <ul class="list-group mb-4">
+    {% for newsletter in approved_newsletters %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        <span>{{ newsletter.title }}</span>
+        <div class="d-flex align-items-center">
+          <a href="{% url 'newsletter_detail' newsletter.pk %}" class="btn btn-sm btn-outline-primary me-3">Read</a>
+          <span class="badge bg-success">Approved</span>
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="text-muted">No approved newsletters yet.</p>
+{% endif %}
+
+{% endblock %}

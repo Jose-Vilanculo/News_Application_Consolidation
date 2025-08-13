@@ -1,0 +1,10 @@
+{% extends 'core/base.html' %}
+{% block title %}Edit Newsletter{% endblock %}
+{% block content %}
+<h2>Edit Newsletter: {{ newsletter.title }}</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Update Newsletter</button>
+</form>
+{% endblock %}

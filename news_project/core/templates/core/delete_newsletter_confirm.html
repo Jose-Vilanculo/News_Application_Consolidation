@@ -1,0 +1,16 @@
+{% extends 'core/base.html' %}
+{% block title %}Delete Newsletter{% endblock %}
+{% block content %}
+<h2>Are you sure you want to delete this newsletter?</h2>
+
+<div class="card my-4 p-3">
+    <h4>{{ newsletter.title }}</h4>
+    <p>{{ newsletter.body|truncatewords:30 }}</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}
