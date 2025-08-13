@@ -13,14 +13,16 @@ def subscribed_articles(request):
     and journalists.
 
     This API endpoint is accessible only to authenticated users
-    with the Reader role.
-    It returns a list of distinct, approved articles authored by:
+    with the Reader role. It returns a list of distinct, approved
+    articles authored by:
     - Journalists the reader is subscribed to
     - Publishers the reader is subscribed to
 
-    Returns:
-        Response: JSON serialized list of articles or a 403 error
-        if the user is not a reader.
+    :param request: HTTP request from the user.
+    :type request: HttpRequest
+    :return: JSON serialized list of articles or 403 error if user is
+        not a reader.
+    :rtype: Response
     """
     user = request.user
 
