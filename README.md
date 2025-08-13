@@ -114,6 +114,7 @@ TWITTER_ACCESS_SECRET = 'your-access-secret'
   DB_HOST=db
   DB_PORT=3306
   ```
+Open docker Desktop on your machine.
 
 Run:
 ```bash
