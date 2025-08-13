@@ -8,19 +8,19 @@ class CustomUser(AbstractUser):
     Custom user model extending Django's AbstractUser.
 
     Fields:
-        - role: Defines the user's role ('reader', 'journalist', or 'editor')
-        - subscribed_publishers: Many-to-many relationship for readers
-        to follow publishers
-        - subscribed_journalists: Many-to-many relationship for readers
-        to follow journalists
+        - role: User role ('reader', 'journalist', or 'editor').
+        - subscribed_publishers: Many-to-many relation for readers to
+            follow publishers.
+        - subscribed_journalists: Many-to-many relation for readers to
+            follow journalists.
 
     Methods:
-        - is_reader(): Returns True if user is a reader
-        - is_journalist(): Returns True if user is a journalist
-        - is_editor(): Returns True if user is an editor
-        - save(): Overrides save to enforce mutual exclusivity between roles
-        and clear irrelevant data
-        - assign_group(): Automatically assigns user to group based on role
+        - is_reader(): True if user is a reader.
+        - is_journalist(): True if user is a journalist.
+        - is_editor(): True if user is an editor.
+        - save(): Overrides save to enforce mutual exclusivity between
+            roles and clear irrelevant data.
+        - assign_group(): Assigns user to group based on role.
     """
     ROLE_CHOICES = (
         ('reader', 'Reader'),
@@ -78,12 +78,12 @@ class Publisher(models.Model):
     Represents a publishing entity in the system.
 
     Fields:
-        - name: Name of the publisher
-        - editors: Users with editor roles affiliated with this publisher
-        - journalists: Users with journalist roles affiliated with publisher
+        - name: Name of the publisher.
+        - editors: Editors affiliated with this publisher.
+        - journalists: Journalists affiliated with this publisher.
 
     Methods:
-        - __str__(): Returns the name of the publisher
+        - __str__(): Returns the name of the publisher.
     """
     name = models.CharField(max_length=100)
     editors = models.ManyToManyField(
@@ -106,15 +106,15 @@ class Article(models.Model):
     Represents a news article written by a journalist.
 
     Fields:
-        - title: Title of the article
-        - content: Full text of the article
-        - created_at: Timestamp of article creation
-        - approved: Boolean indicating approval by an editor
-        - journalist: Author of the article (must be a CustomUser)
-        - publisher: Optional publisher associated with the article
+        - title: Title of the article.
+        - content: Full text of the article.
+        - created_at: Timestamp when article was created.
+        - approved: True if approved by an editor.
+        - journalist: Author (CustomUser) of the article.
+        - publisher: Optional publisher for the article.
 
     Methods:
-        - __str__(): Returns the article title
+        - __str__(): Returns the article title.
     """
     title = models.CharField(max_length=200)
     content = models.TextField()
@@ -138,14 +138,14 @@ class Newsletter(models.Model):
     Represents a newsletter created by a journalist.
 
     Fields:
-        - title: Title of the newsletter
-        - body: Content of the newsletter
-        - created_at: Timestamp of creation
-        - journalist: The journalist who authored the newsletter
-        - publisher: Optional publisher under which the newsletter is released
+        - title: Title of the newsletter.
+        - body: Content of the newsletter.
+        - created_at: Timestamp when created.
+        - journalist: Authoring journalist.
+        - publisher: Optional publisher for the newsletter.
 
     Methods:
-        - __str__(): Returns the newsletter title
+        - __str__(): Returns the newsletter title.
     """
     title = models.CharField(max_length=200)
     body = models.TextField()

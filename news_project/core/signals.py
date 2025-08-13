@@ -10,19 +10,22 @@ from .functions.tweet import Tweet
 @receiver(post_save, sender=Article)
 def notify_on_approval(sender, instance, created, **kwargs):
     """
-    Signal handler that is triggered when an Article instance is saved.
+    Signal handler triggered when an Article is saved.
 
-    If the article is marked as approved, this function:
-    - Sends an email notification containing the article to all users
-      who are subscribed to either the journalist or the publisher.
-    - Posts the article content to X (formerly Twitter) using the Tweet class.
+    If the article is approved, this function:
+    - Sends an email notification with the article to all users subscribed
+    to the journalist or publisher.
+    - Posts the article content to X (formerly Twitter) using the Tweet
+    class.
 
-    Args:
-        sender (Model): The model class (Article).
-        instance (Article): The actual Article instance being saved.
-        created (bool): Whether this instance was created (True)
-        or updated (False).
-        **kwargs: Additional keyword arguments.
+    :param sender: The model class (Article).
+    :type sender: Model
+    :param instance: The Article instance being saved.
+    :type instance: Article
+    :param created: True if the instance was created, False if updated.
+    :type created: bool
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: dict
     """
     if instance.approved:
         # Collect all subscribers to the journalist and publisher
@@ -65,17 +68,19 @@ User = get_user_model()
 @receiver(post_save, sender=Newsletter)
 def send_newsletter_to_subscribers(sender, instance, created, **kwargs):
     """
-    Signal handler that sends a newsletter via email when a new Newsletter
-    instance is approved.
+    Signal handler that emails a newsletter when it is approved.
 
-    Sends the newsletter body to all readers who are subscribed to the
-    authoring journalist or to the selected publisher (if provided).
+    Sends the newsletter body to all readers subscribed to the journalist
+    or the selected publisher, if provided.
 
-    Args:
-        sender (Model): The model class (Newsletter).
-        instance (Newsletter): The newsletter instance being saved.
-        approved (bool): Whether this instance was approved (True)
-        **kwargs: Additional keyword arguments.
+    :param sender: The model class (Newsletter).
+    :type sender: Model
+    :param instance: The Newsletter instance being saved.
+    :type instance: Newsletter
+    :param approved: True if the instance is approved.
+    :type approved: bool
+    :param kwargs: Additional keyword arguments.
+    :type kwargs: dict
     """
     if instance.approved:
         journalist = instance.journalist

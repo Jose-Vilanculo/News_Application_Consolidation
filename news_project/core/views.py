@@ -12,12 +12,28 @@ from django.db.models import Q
 
 
 def home_view(request):
+    """
+    Render the home page or redirect authenticated users.
+
+    :param request: HTTP request with authentication data.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render home page.
+    :rtype: HttpResponse
+    """
     if request.user.is_authenticated:
         return redirect('dashboard')
     return render(request, 'core/home.html')
 
 
 def login_view(request):
+    """
+    Authenticate user and log them in.
+
+    :param request: HTTP request with login credentials.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render login form.
+    :rtype: HttpResponse
+    """
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
@@ -34,6 +50,14 @@ def login_view(request):
 
 
 def register_view(request):
+    """
+    Register a new user and log them in.
+
+    :param request: HTTP request with registration data.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render registration form.
+    :rtype: HttpResponse
+    """
     if request.user.is_authenticated:
         return redirect('dashboard')
 
@@ -54,12 +78,28 @@ def register_view(request):
 
 
 def logout_view(request):
+    """
+    Log out the current user.
+
+    :param request: HTTP request with session data.
+    :type request: HttpRequest
+    :return: Redirect to home page.
+    :rtype: HttpResponseRedirect
+    """
     logout(request)
     return redirect('home')
 
 
 @login_required
 def dashboard_view(request):
+    """
+    Display dashboard for the user's role.
+
+    :param request: HTTP request with user data.
+    :type request: HttpRequest
+    :return: Rendered dashboard page.
+    :rtype: HttpResponse
+    """
     user = request.user
     pending_articles = Article.objects.filter(approved=False)
     approved_articles = Article.objects.filter(approved=True)
@@ -134,20 +174,52 @@ def dashboard_view(request):
 
 
 def is_journalist(user):
+    """
+    Check if user is a journalist.
+
+    :param user: User instance.
+    :type user: User
+    :return: True if authenticated journalist.
+    :rtype: bool
+    """
     return user.is_authenticated and user.is_journalist()
 
 
 def is_editor(user):
+    """
+    Check if user is an editor.
+
+    :param user: User instance.
+    :type user: User
+    :return: True if authenticated editor.
+    :rtype: bool
+    """
     return user.is_authenticated and user.is_editor()
 
 
 def is_editor_or_journalist(user):
+    """
+    Check if user is an editor or journalist.
+
+    :param user: User instance.
+    :type user: User
+    :return: True if editor or journalist.
+    :rtype: bool
+    """
     return user.is_authenticated and (user.is_editor() or user.is_journalist())
 
 
 @login_required
 @user_passes_test(lambda u: u.is_reader())
 def manage_subscriptions(request):
+    """
+    Manage reader subscriptions.
+
+    :param request: HTTP request with subscription data.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render subscriptions page.
+    :rtype: HttpResponse
+    """
     user = request.user
 
     if request.method == 'POST':
@@ -175,6 +247,17 @@ def manage_subscriptions(request):
 @login_required
 @user_passes_test(is_editor)
 def approve_article(request, article_id):
+    """
+    Approve an article.
+
+    :param request: HTTP request by an editor.
+    :type request: HttpRequest
+    :param article_id: Article ID.
+    :type article_id: int
+    :return: Redirect to dashboard.
+    :rtype: HttpResponseRedirect
+    :raises Http404: If article not found.
+    """
     article = get_object_or_404(Article, id=article_id)
     article.approved = True
     article.save()
@@ -184,6 +267,14 @@ def approve_article(request, article_id):
 @login_required
 @user_passes_test(is_journalist)
 def create_article(request):
+    """
+    Create a new article.
+
+    :param request: HTTP request with article data.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render form.
+    :rtype: HttpResponse
+    """
     if request.method == 'POST':
         form = ArticleForm(request.POST)
         if form.is_valid():
@@ -206,6 +297,17 @@ def create_article(request):
 @login_required
 @user_passes_test(is_editor_or_journalist)
 def edit_article(request, pk):
+    """
+    Edit an article.
+
+    :param request: HTTP request with updated data.
+    :type request: HttpRequest
+    :param pk: Article primary key.
+    :type pk: int
+    :return: Redirect to dashboard or render edit form.
+    :rtype: HttpResponse
+    :raises Http404: If article not found.
+    """
     article = get_object_or_404(Article, pk=pk)
 
     # Check ownership/permission manually
@@ -229,6 +331,18 @@ def edit_article(request, pk):
 @login_required
 @user_passes_test(is_editor_or_journalist)
 def delete_article(request, pk):
+    """
+    Delete an article.
+
+    :param request: HTTP request to delete.
+    :type request: HttpRequest
+    :param pk: Article primary key.
+    :type pk: int
+    :return: Redirect or render confirmation.
+    :rtype: HttpResponse
+    :raises HttpResponseForbidden: No permission.
+    :raises Http404: If not found.
+    """
     article = get_object_or_404(Article, pk=pk)
 
     # Check if user is allowed to delete
@@ -248,12 +362,34 @@ def delete_article(request, pk):
 
 @login_required
 def article_detail(request, pk):
+    """
+    Display article details.
+
+    :param request: HTTP request.
+    :type request: HttpRequest
+    :param pk: Article primary key.
+    :type pk: int
+    :return: Render article detail page.
+    :rtype: HttpResponse
+    :raises Http404: If not found.
+    """
     article = get_object_or_404(Article, pk=pk)
     return render(request, 'core/article_detail.html', {'article': article})
 
 
 @login_required
 def newsletter_detail(request, pk):
+    """
+    Display newsletter details.
+
+    :param request: HTTP request.
+    :type request: HttpRequest
+    :param pk: Newsletter primary key.
+    :type pk: int
+    :return: Render newsletter detail page.
+    :rtype: HttpResponse
+    :raises Http404: If not found.
+    """
     newsletter = get_object_or_404(Newsletter, pk=pk)
     return render(
         request,
@@ -265,6 +401,14 @@ def newsletter_detail(request, pk):
 @login_required
 @user_passes_test(is_journalist)
 def create_newsletter(request):
+    """
+    Create a newsletter.
+
+    :param request: HTTP request with data.
+    :type request: HttpRequest
+    :return: Redirect to dashboard or render form.
+    :rtype: HttpResponse
+    """
     if request.method == 'POST':
         form = NewsletterForm(request.POST)
         if form.is_valid():
@@ -287,6 +431,17 @@ def create_newsletter(request):
 @login_required
 @user_passes_test(is_editor_or_journalist)
 def edit_newsletter(request, pk):
+    """
+    Edit a newsletter.
+
+    :param request: HTTP request with updated data.
+    :type request: HttpRequest
+    :param pk: Newsletter primary key.
+    :type pk: int
+    :return: Redirect to dashboard or render edit form.
+    :rtype: HttpResponse
+    :raises Http404: If not found.
+    """
     newsletter = get_object_or_404(Newsletter, pk=pk)
 
     # Check ownership/permission manually
@@ -310,6 +465,18 @@ def edit_newsletter(request, pk):
 @login_required
 @user_passes_test(is_editor_or_journalist)
 def delete_newsletter(request, pk):
+    """
+    Delete a newsletter.
+
+    :param request: HTTP request to delete.
+    :type request: HttpRequest
+    :param pk: Newsletter primary key.
+    :type pk: int
+    :return: Redirect or render confirmation.
+    :rtype: HttpResponse
+    :raises HttpResponseForbidden: No permission.
+    :raises Http404: If not found.
+    """
     newsletter = get_object_or_404(Newsletter, pk=pk)
 
     # Check if user is allowed to delete
@@ -332,6 +499,18 @@ def delete_newsletter(request, pk):
 @login_required
 @user_passes_test(is_editor)
 def approve_newsletter(request, newsletter_id):
+    """
+    Approve a newsletter.
+
+    :param request: HTTP POST request by editor.
+    :type request: HttpRequest
+    :param newsletter_id: Newsletter ID.
+    :type newsletter_id: int
+    :return: Redirect to dashboard.
+    :rtype: HttpResponseRedirect
+    :raises HttpResponseNotAllowed: If method not POST.
+    :raises Http404: If not found.
+    """
     newsletter = get_object_or_404(Newsletter, id=newsletter_id)
     print(f"Newsletter Object: {newsletter}")
 

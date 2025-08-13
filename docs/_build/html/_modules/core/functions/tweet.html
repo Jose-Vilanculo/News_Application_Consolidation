@@ -1,0 +1,286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>core.functions.tweet &mdash; news_project 00.00.01 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=d7bb8d4d"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            news_project
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">news_project</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">news_project</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">core.functions.tweet</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for core.functions.tweet</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">requests_oauthlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">OAuth1Session</span>
+
+
+<div class="viewcode-block" id="Tweet">
+<a class="viewcode-back" href="../../../core.functions.html#core.functions.tweet.Tweet">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Tweet</span><span class="p">():</span>
+
+    <span class="n">_instance</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">TOKEN_FILE</span> <span class="o">=</span> <span class="s2">&quot;twitter_token.json&quot;</span>
+
+    <span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;REPLACE WITH TWITTER API CONSUMER KEY&quot;</span><span class="p">]</span>
+    <span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;REPLACE WITH TWITTER API CONSUMER SECRET&quot;</span><span class="p">]</span>
+
+    <span class="n">TWITTER_SUPPORTED_MIME_TYPES</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;image/jpeg&#39;</span><span class="p">,</span> <span class="s1">&#39;image/png&#39;</span><span class="p">,</span> <span class="s1">&#39;image/gif&#39;</span><span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This code will determine whether a class instance of Tweet exists.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            If it does exist , it returns the current instance,</span>
+<span class="sd">            if it doesn&#39;t, a new instance will be created and returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Tweet</span><span class="p">,</span> <span class="bp">cls</span><span class="p">)</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span><span class="o">.</span><span class="n">authenticate</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instance</span>
+
+<div class="viewcode-block" id="Tweet.authenticate">
+<a class="viewcode-back" href="../../../core.functions.html#core.functions.tweet.Tweet.authenticate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">authenticate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Authenticate with the Twitter API using OAuth1.</span>
+
+<span class="sd">        Behavior:</span>
+<span class="sd">            - If an access token file exists, it loads credentials from it.</span>
+<span class="sd">            - If not, it initiates the OAuth flow:</span>
+<span class="sd">                - Fetches request token</span>
+<span class="sd">                - Prompts user to authorize via a browser link</span>
+<span class="sd">                - Exchanges verifier PIN for an access token</span>
+<span class="sd">                - Saves the token to disk for reuse</span>
+
+<span class="sd">        Side Effects:</span>
+<span class="sd">            - Sets `self.oauth` to an authenticated OAuth1Session.</span>
+<span class="sd">            - Writes token data to `self.TOKEN_FILE`.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            ValueError: If consumer key/secret is invalid.</span>
+<span class="sd">            Exception: On failure during any request or user input step.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Check first if token file already exists</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TOKEN_FILE</span><span class="p">):</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TOKEN_FILE</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">token_data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loaded access token from file.&quot;</span><span class="p">)</span>
+                <span class="c1"># Make the request object</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuth1Session</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_KEY</span><span class="p">,</span>
+                    <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span>
+                    <span class="n">resource_owner_key</span><span class="o">=</span><span class="n">token_data</span><span class="p">[</span><span class="s2">&quot;oauth_token&quot;</span><span class="p">],</span>
+                    <span class="n">resource_owner_secret</span><span class="o">=</span><span class="n">token_data</span><span class="p">[</span><span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                    <span class="s2">&quot;https://api.twitter.com/1.1/account&quot;</span>
+                    <span class="s2">&quot;/verify_credentials.json&quot;</span>
+                <span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>  <span class="c1"># Shows which user is authenticated</span>
+
+                <span class="k">return</span>
+
+        <span class="c1"># Start OAuth process from scratch</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Authenticating with Twitter...&quot;</span><span class="p">)</span>
+        <span class="c1"># Get request token</span>
+        <span class="n">request_token_url</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;https://api.twitter.com/oauth/request_token&quot;</span>
+            <span class="s2">&quot;?oauth_callback=oob&amp;x_auth_access_type=write&quot;</span>
+        <span class="p">)</span>
+        <span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuth1Session</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_KEY</span><span class="p">,</span>
+            <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_SECRET</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">fetch_response</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">fetch_request_token</span><span class="p">(</span><span class="n">request_token_url</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;There may have been an issue with the consumer_key&quot;</span>
+                <span class="s2">&quot; or consumer_secret you entered&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">resource_owner_key</span> <span class="o">=</span> <span class="n">fetch_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;oauth_token&quot;</span><span class="p">)</span>
+        <span class="n">resource_owner_secret</span> <span class="o">=</span> <span class="n">fetch_response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Got OAuth token: </span><span class="si">{</span><span class="n">resource_owner_key</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get authorization</span>
+        <span class="n">base_authorization_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.twitter.com/oauth/authorize&quot;</span>
+        <span class="n">authorization_url</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">authorization_url</span><span class="p">(</span><span class="n">base_authorization_url</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Please go here and authorize: </span><span class="si">{</span><span class="n">authorization_url</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">verifier</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Paste the PIN here: &quot;</span><span class="p">)</span>
+
+        <span class="c1"># Get the access token</span>
+        <span class="n">access_token_url</span> <span class="o">=</span> <span class="s2">&quot;https://api.twitter.com/oauth/access_token&quot;</span>
+        <span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuth1Session</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_KEY</span><span class="p">,</span>
+            <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span>
+            <span class="n">resource_owner_key</span><span class="o">=</span><span class="n">resource_owner_key</span><span class="p">,</span>
+            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="n">resource_owner_secret</span><span class="p">,</span>
+            <span class="n">verifier</span><span class="o">=</span><span class="n">verifier</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">oauth_token</span> <span class="o">=</span> <span class="n">oauth</span><span class="o">.</span><span class="n">fetch_access_token</span><span class="p">(</span><span class="n">access_token_url</span><span class="p">)</span>
+
+        <span class="n">access_token</span> <span class="o">=</span> <span class="n">oauth_token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;oauth_token&quot;</span><span class="p">)</span>
+        <span class="n">access_token_secret</span> <span class="o">=</span> <span class="n">oauth_token</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Save in file for future use</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">TOKEN_FILE</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">({</span>
+                <span class="s2">&quot;oauth_token&quot;</span><span class="p">:</span> <span class="n">access_token</span><span class="p">,</span>
+                <span class="s2">&quot;oauth_token_secret&quot;</span><span class="p">:</span> <span class="n">access_token_secret</span>
+            <span class="p">},</span> <span class="n">f</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Access token saved for future use.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Make the request object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span> <span class="o">=</span> <span class="n">OAuth1Session</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_KEY</span><span class="p">,</span>
+            <span class="n">client_secret</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">CONSUMER_SECRET</span><span class="p">,</span>
+            <span class="n">resource_owner_key</span><span class="o">=</span><span class="n">access_token</span><span class="p">,</span>
+            <span class="n">resource_owner_secret</span><span class="o">=</span><span class="n">access_token_secret</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Tweet.make_tweet">
+<a class="viewcode-back" href="../../../core.functions.html#core.functions.tweet.Tweet.make_tweet">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_tweet</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Post a tweet to the Twitter API.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            text (str): The main tweet content</span>
+<span class="sd">            (will be trimmed to 280 characters).</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+
+<span class="sd">        Behavior:</span>
+<span class="sd">            - Posts the tweet via Twitter API v2.</span>
+<span class="sd">            - Handles errors silently, logging them to console.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            RuntimeError: If authentication was not completed.</span>
+<span class="sd">            Exception: If tweet submission fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># twitter api only allows 280 characters</span>
+        <span class="n">tweet_data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;text&quot;</span><span class="p">:</span> <span class="n">text</span><span class="o">.</span><span class="n">strip</span><span class="p">()[:</span><span class="mi">280</span><span class="p">]}</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;oauth&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Twitter OAuth session is not initialized.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Making the request</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">oauth</span><span class="o">.</span><span class="n">post</span><span class="p">(</span>
+                <span class="s2">&quot;https://api.twitter.com/2/tweets&quot;</span><span class="p">,</span>
+                <span class="n">json</span><span class="o">=</span><span class="n">tweet_data</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">!=</span> <span class="mi">201</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                    <span class="s2">&quot;request returned an error: </span><span class="si">{}</span><span class="s2"> - </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="n">response</span><span class="o">.</span><span class="n">text</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[Tweet] Exception while sending tweet: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Response code: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">text</span><span class="p">))</span>
+
+        <span class="c1"># Saving the response as JSON</span>
+        <span class="n">json_response</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">json_response</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Jose Vilanculo.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
