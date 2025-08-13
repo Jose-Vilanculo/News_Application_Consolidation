@@ -1,0 +1,40 @@
+services:
+  db:
+    image: mariadb:10.9
+    restart: always
+
+    environment:
+      MYSQL_DATABASE: newsdb
+      MYSQL_USER: newsuser
+      MYSQL_PASSWORD: newspassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    ports:
+      - '3306:3306'
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - news_net
+
+  web:
+    build: .
+    restart: always
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      DB_NAME: newsdb
+      DB_USER: newsuser
+      DB_PASSWORD: newspassword
+      DB_HOST: db 
+      DB_PORT: 3306
+    depends_on:
+      - db
+    networks:
+      - news_net
+
+volumes:
+  mariadb_data:
+
+networks:
+  news_net:
