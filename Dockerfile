@@ -29,4 +29,4 @@ COPY . /app/
 EXPOSE 8000
 
 # Start the Django server
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+CMD ["python", "news_project/manage.py", "runserver", "0.0.0.0:8000"]
